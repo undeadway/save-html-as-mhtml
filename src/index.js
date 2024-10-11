@@ -5,28 +5,23 @@ const { UPPER_CASE, LOWER_CASE, DIGIT, BLANK, MIME_TEXT_CSS, MIME_TEXT_HTML, QUO
 const LETTERS = `${UPPER_CASE}${LOWER_CASE}`, UPPER_DIGIT = `${UPPER_CASE}${DIGIT}`, LETTER_DIGIT = `${LETTERS}${DIGIT}`;
 
 const execute = async (html, fileName, contentLocation, outputDir) => {
-	contentLocation = contentLocation || "http://localhost/"
-
-	const styles = Client.getStyles(); 	// CSS
-
-	const contents = [`<!DOCTYPE html><html lang=3D\"zh-CN\" class=3D\" \"><head><meta http-equiv=3D\"Content-Type\" content=3D\"${MIME_TEXT_HTML}; charset=3DUTF-8\">`];
-
-	for (const style of styles) {
-		contents.push(`<link rel=3D"stylesheet" type=3D"${MIME_TEXT_CSS}" href=3D"${style.contentLocation}" />`);
-	}
-
-	let input = urlEncode(html);
-	input = input.replaceAll("=\"", "=3D\"");
-	contents.push(`<body>${input}</body></html>`);
-
+	// 初始化
+	contentLocation = contentLocation || "http://localhost/";
+	let input = urlEncode(html).replaceAll("=\"", "=3D\"");
+	const boundary = `----MultipartBoundary--${createBoundary()}----`;
 	let contentId = Date.now().toString(16).toUpperCase() + Math.random().toString(16).slice(2).toUpperCase();
-
 	for (let i = contentId.length; i < 32; i++) {
 		const ch = UPPER_DIGIT[Math.floor(Math.random() * 36)];
 		contentId += ch;
 	}
 
-	const boundary = `----MultipartBoundary--${createBoundary()}----`;
+	const styles = Client.getStyles(); 	// CSS
+
+	const contents = [`<!DOCTYPE html><html lang=3D\"zh-CN\" class=3D\" \"><head><meta http-equiv=3D\"Content-Type\" content=3D\"${MIME_TEXT_HTML}; charset=3DUTF-8\">`];
+	for (const style of styles) {
+		contents.push(`<link rel=3D"stylesheet" type=3D"${MIME_TEXT_CSS}" href=3D"${style.contentLocation}" />`);
+	}
+	contents.push(`<body>${input}</body></html>`);
 
 	const output = [
 		"From: <Saved by Blink>",
