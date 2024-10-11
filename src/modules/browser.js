@@ -32,8 +32,7 @@ const getFilesBase64 = async (html) => {
 	while (true) {
 		const matched = html.match(HTML_IMAGE_REGX);
 		if (matched === null) break;
-
-		let [ proto, , path ] = matched;
+		let [ proto, src ] = matched;
 
 		/**
 		 * http(s)://abac.com/a.jpg 不处理
@@ -42,15 +41,15 @@ const getFilesBase64 = async (html) => {
 		 * /abc/a.jpg => 当前网网站的地址（http://abc.com） + /abc/a.jpg
 		 * ../abc/a.jpg => 当前网页的路径（http://abc.com/a/b/） + ../abc/a.jpg
 		 */
-		if (path.indexOf("/") && !path.indexOf("//")) {
-			path = document.location.origin + path;
+		if (src.indexOf("/") && !src.indexOf("//")) {
+			src = document.location.origin + src;
 		}
 		if (path.indexOf(".")) {
-			path = document.location.href + path;
+			src = document.location.href + src;
 		}
 
 		const promise = new Promise((resolve, reject) => {
-			fetch(path).then(async response => {
+			fetch(src).then(async response => {
 				if (response.ok) {
 					const blob = await response.blob();
 					const reader = new FileReader();
@@ -60,7 +59,7 @@ const getFilesBase64 = async (html) => {
 						const { result } = e.target;
 						const first = result.slice(5, 21).split(";");
 						const base64Val = result.slice(22);
-						resolve({contentLocation: path, value: base64Val, contentType: first[0], contentTransferEncoding: first[1]});
+						resolve({contentLocation: src, value: base64Val, contentType: first[0], contentTransferEncoding: first[1]});
 					}
 				} else {
 					resolve({}); // 如果获取文件失败,则返回一个空对象，至少让程序不中途崩溃
