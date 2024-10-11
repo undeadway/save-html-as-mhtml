@@ -61,12 +61,12 @@ const getFilesBase64 = async (html, contentLocation) => {
 						resolve({contentLocation: path, value: data, contentType, contentTransferEncoding: BASE64});
 					});
 				});
-			} else { // 不然一律以本体图片处理，而本地图片不管是否真是本地图片则不做考虑
+			} else { // 不然一律以本地图片处理，而本地图片不管是否真是本地图片则不做考虑
  				// / 开头，linux 绝对路径文件
 				// 字母:\ 开头，windows 绝对路径文件
 				// 其他 相对路径文件
 				// TODO 因为 windows 的文件路径处理起来相当麻烦，所以暂时不对 windows 的文件路径进行处理
-				// 或者说暂时智能处理 相对路径和网络路径
+				// 或者说暂时只能处理 相对路径和网络路径
 				try {
 					let tmpPath = path;
 					if (path.indexOf(MK_SLASH) !== 0 && path.match(WINDOWS_PATH_REGX) === null) {
