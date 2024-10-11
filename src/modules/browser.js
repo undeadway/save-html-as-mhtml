@@ -33,8 +33,24 @@ const getFilesBase64 = async (html) => {
 		const matched = html.match(HTML_IMAGE_REGX);
 		if (matched === null) break;
 
+		let [ proto, , path ] = matched;
+
+		/**
+		 * http(s)://abac.com/a.jpg 不处理
+		 * //abac.com/a.jpg => 不处理
+		 * abac.com/a.jpg 不处理
+		 * /abc/a.jpg => 当前网网站的地址（http://abc.com） + /abc/a.jpg
+		 * ../abc/a.jpg => 当前网页的路径（http://abc.com/a/b/） + ../abc/a.jpg
+		 */
+		if (path.indexOf("/") && !path.indexOf("//")) {
+			path = document.location.origin + path;
+		}
+		if (path.indexOf(".")) {
+			path = document.location.href + path;
+		}
+
 		const promise = new Promise((resolve, reject) => {
-			fetch(matched[2]).then(async response => {
+			fetch(path).then(async response => {
 				if (response.ok) {
 					const blob = await response.blob();
 					const reader = new FileReader();
@@ -44,7 +60,7 @@ const getFilesBase64 = async (html) => {
 						const { result } = e.target;
 						const first = result.slice(5, 21).split(";");
 						const base64Val = result.slice(22);
-						resolve({contentLocation: matched[2], value: base64Val, contentType: first[0], contentTransferEncoding: first[1]});
+						resolve({contentLocation: path, value: base64Val, contentType: first[0], contentTransferEncoding: first[1]});
 					}
 				} else {
 					resolve({}); // 如果获取文件失败,则返回一个空对象，至少让程序不中途崩溃
