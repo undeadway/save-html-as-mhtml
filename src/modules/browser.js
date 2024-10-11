@@ -45,7 +45,7 @@ const getFilesBase64 = async (html) => {
 		if (src.indexOf("/") && !src.indexOf("//")) {
 			src = document.location.origin + src;
 		}
-		if (path.indexOf(".")) {
+		if (src.indexOf(".")) {
 			src = document.location.href + src;
 		}
 
