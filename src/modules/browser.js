@@ -63,7 +63,6 @@ const getFilesBase64 = async (html) => {
 					}
 				} else {
 					resolve({}); // 如果获取文件失败,则返回一个空对象，至少让程序不中途崩溃
-					// reject(`HTTP 错误！状态：${response.status}`);
 				}
 			});
 		});
