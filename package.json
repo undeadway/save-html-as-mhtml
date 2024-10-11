@@ -1,0 +1,30 @@
+{
+  "name": "save-html-as-mhtml",
+  "version": "0.0.1",
+  "description": "Save all elements of the HTML page (including images, styles, etc.) as a single MHTML file",
+  "license": "Apache-2.0",
+  "author": "hzwaygc@gmail.com",
+  "main": "./src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/undeadway/save-html-as-mhtml.git"
+  },
+  "homepage": "http://codes.waygc.net/projects?save-html-as-mhtml",
+  "bugs": {
+    "url": "https://github.com/undeadway/save-html-as-mhtml/issues"
+  },
+  "keywords": [
+    "html",
+    "mhtml"
+  ],
+  "scripts": {
+    "build": "webpack"
+  },
+  "dependencies": {
+    "fileinfo": "^1.0.4"
+  },
+  "devDependencies": {
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
