@@ -42,10 +42,10 @@ const getFilesBase64 = async (html) => {
 		 * /abc/a.jpg => 当前网网站的地址（http://abc.com） + /abc/a.jpg
 		 * ../abc/a.jpg => 当前网页的路径（http://abc.com/a/b/） + ../abc/a.jpg
 		 */
-		if (src.indexOf("/") && !src.indexOf("//")) {
+		if (src.indexOf("/") === 0 && src.indexOf("//") !== 0) {
 			src = document.location.origin + src;
 		}
-		if (src.indexOf(".")) {
+		if (src.indexOf(".") === 0) {
 			src = document.location.href + src;
 		}
 
