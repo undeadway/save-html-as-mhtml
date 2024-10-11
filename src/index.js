@@ -4,9 +4,11 @@ const Client = utils.isBbrowser() ? require("./modules/browser") : require("./mo
 const { UPPER_CASE, LOWER_CASE, DIGIT, BLANK, MIME_TEXT_CSS, MIME_TEXT_HTML, QUOTED_PRINTABLE, AT_MHTML_BLINK } = require("./../lib/constants");
 const LETTERS = `${UPPER_CASE}${LOWER_CASE}`, UPPER_DIGIT = `${UPPER_CASE}${DIGIT}`, LETTER_DIGIT = `${LETTERS}${DIGIT}`;
 
-const execute = async (html, fileName, contentLocation, outputDir) => {
+const execute = async (html, { fileName, contentLocation, outputDir }, options) => {
 	// 初始化
+	options = options = {};
 	contentLocation = contentLocation || "http://localhost/";
+
 	let input = urlEncode(html).replaceAll("=\"", "=3D\"");
 	const boundary = `----MultipartBoundary--${createBoundary()}----`;
 	let contentId = Date.now().toString(16).toUpperCase() + Math.random().toString(16).slice(2).toUpperCase();
@@ -15,7 +17,7 @@ const execute = async (html, fileName, contentLocation, outputDir) => {
 		contentId += ch;
 	}
 
-	const styles = Client.getStyles(); 	// CSS
+	const styles = Client.getStyles(options); 	// CSS
 
 	const contents = [`<!DOCTYPE html><html lang=3D\"zh-CN\" class=3D\" \"><head><meta http-equiv=3D\"Content-Type\" content=3D\"${MIME_TEXT_HTML}; charset=3DUTF-8\">`];
 	for (const style of styles) {

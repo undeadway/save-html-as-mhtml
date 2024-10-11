@@ -1,13 +1,16 @@
 const utils = require("./../lib/utils");
 const { MIME_TEXT_CSS, QUOTED_PRINTABLE, HTML_IMAGE_REGX, MK_DASH, MK_POINT, BLANK, AT_MHTML_BLINK } = require("./../lib/constants");
 
-const getStyles = () => {
+const getStyles = (options) => {
 	const styles = document.getElementsByTagName("style");
+	const symbol = options.style.symbol || BLANK;
 	const output = [];
 
 	for (const { innerText } of styles) {
 		try {
-			if (utils.checkObjectIsNotEmpty(innerText) && innerText.indexOf(".modell-") >= 0) {
+			// 这里是希望不载入太多的 css 属性，所以设置了 symbol 作为是否含有该字符串的判断
+			// 比如如果使用了某些库，则可以使用 symbol 
+			if (utils.checkObjectIsNotEmpty(innerText) && innerText.indexOf(symbol) >= 0) {
 				let random = (Math.random()).toString();
 				random = random.replace(MK_POINT, MK_DASH);
 
@@ -29,9 +32,7 @@ const getStyles = () => {
 const getFilesBase64 = async (html) => {
 	const arr = [];
 
-	while (true) {
-		const matched = html.match(HTML_IMAGE_REGX);
-		if (matched === null) break;
+	while ((matched = html.match(HTML_IMAGE_REGX)) !== null) {
 		let [ proto, src ] = matched;
 
 		/**
