@@ -1,6 +1,6 @@
 {
   "name": "save-html-as-mhtml",
-  "version": "0.0.1",
+  "version": "0.0.1-1",
   "description": "Save all elements of the HTML page (including images, styles, etc.) as a single MHTML file",
   "license": "Apache-2.0",
   "author": "hzwaygc@gmail.com",
