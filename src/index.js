@@ -1,14 +1,12 @@
-const utils = require("../lib/utils");
+const utils = require("./lib/utils");
 const Client = utils.isBbrowser() ? require("./modules/browser") : require("./modules/others");
 
-const { UPPER_CASE, LOWER_CASE, DIGIT, BLANK, MIME_TEXT_CSS, MIME_TEXT_HTML, QUOTED_PRINTABLE, AT_MHTML_BLINK } = require("./../lib/constants");
+const { UPPER_CASE, LOWER_CASE, DIGIT, BLANK, MIME_TEXT_CSS, MIME_TEXT_HTML, QUOTED_PRINTABLE, AT_MHTML_BLINK } = require("./lib/constants");
 const LETTERS = `${UPPER_CASE}${LOWER_CASE}`, UPPER_DIGIT = `${UPPER_CASE}${DIGIT}`, LETTER_DIGIT = `${LETTERS}${DIGIT}`;
 
-const execute = async (html, { fileName, contentLocation, outputDir }, options) => {
+const execute = async (html, options = {}) => {
 	// 初始化
-	options = options = {};
-	contentLocation = contentLocation || "http://localhost/";
-
+	const contentLocation = options.contentLocation || "http://localhost/";
 	let input = urlEncode(html).replaceAll("=\"", "=3D\"");
 	const boundary = `----MultipartBoundary--${createBoundary()}----`;
 	let contentId = Date.now().toString(16).toUpperCase() + Math.random().toString(16).slice(2).toUpperCase();
@@ -28,7 +26,7 @@ const execute = async (html, { fileName, contentLocation, outputDir }, options) 
 	const output = [
 		"From: <Saved by Blink>",
 		`Snapshot-Content-Location:${contentLocation}`,
-		`Subject: =?utf-8?Q?${urlEncode(fileName)}?=`,
+		`Subject: =?utf-8?Q?${urlEncode(options.fileName)}?=`,
 		utils.getFormattedDate(),
 		"MIME-Version: 1.0",
 		"Content-Type: multipart/related;",
@@ -60,7 +58,7 @@ const execute = async (html, { fileName, contentLocation, outputDir }, options) 
 
 	output.push(`--${boundary}--`);
 
-	Client.write(fileName, output.join("\r\n"), outputDir);
+	Client.write(output.join("\r\n"), options);
 }
 
 function createExtern (output, boundary, { contentType, contentTransferEncoding, contentLocation, value }) {

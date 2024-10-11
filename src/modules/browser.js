@@ -76,7 +76,7 @@ const getFilesBase64 = async (html) => {
 	return output;
 }
 
-const write = (fileName, output) => {
+const write = (output, { fileName }) => {
 	const urlObject = window.URL || window.webkitURL || window;
 	const myFile = new Blob([output]);
 	var saveLink = document.createElementNS("http://www.w3.org/1999/xhtml", "a");

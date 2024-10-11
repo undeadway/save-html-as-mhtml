@@ -5,31 +5,37 @@ const fileinfo = require("fileinfo");
 const { BASE64, BINARY, HTTP, HTTPS, WINDOWS_PATH_REGX, HTML_IMAGE_REGX, MIME_TEXT_CSS,
 		MK_DASH, MK_POINT, MK_SLASH, BLANK, QUOTED_PRINTABLE, AT_MHTML_BLINK } = require("./../lib/constants");
 
-const getStyles = () => {
-	const data = fs.readFileSync(`${__dirname}/../../../dist/modell-markedjs-plus.css`);
+const getStyles = (options) => {
+
 	const output = [];
+	try {
+		const paths = Array.isArray(options.style.filePath) ? options.style.filePath : [ options.style.filePath ];
+		for (const filePath of paths) {
+			const data = fs.readFileSync(filePath);
 
-	let random = (Math.random()).toString();
-	random = random.replace(MK_POINT, MK_DASH);
-	output.push({
-		contentType: MIME_TEXT_CSS,
-		contentTransferEncoding: QUOTED_PRINTABLE,
-		contentLocation: `cid:css-${Date.now()}-${random}${AT_MHTML_BLINK}`,
-		value: data
-	});
-
-	return output;
+			let random = (Math.random()).toString();
+			random = random.replace(MK_POINT, MK_DASH);
+			output.push({
+				contentType: MIME_TEXT_CSS,
+				contentTransferEncoding: QUOTED_PRINTABLE,
+				contentLocation: `cid:css-${Date.now()}-${random}${AT_MHTML_BLINK}`,
+				value: data
+			});
+		}
+	} catch {
+		// 这里是为了保证文件读取失败不要造成崩溃
+	} finally {
+		return output;
+	}
 }
 
 const getFilesBase64 = async (html, contentLocation) => {
 	const arr = [];
 
-	while (true) {
-		const matched = html.match(HTML_IMAGE_REGX);
-		if (matched === null) break;
+	while ((matched = html.match(HTML_IMAGE_REGX)) !== null) {
+		let [ proto, path ] = matched;
 
 		const promise = new Promise((resolve, reject) => {
-			let path = matched[2];
 			let fileName = path.split(MK_SLASH);
 			fileName = fileName[fileName.length - 1];
 			if (path.indexOf(HTTP) === 0) { // 非浏览器环境下，图片地址如果以 http 开头，则认为是网络图片，
@@ -103,8 +109,7 @@ function getContentTypeFromBuffer (buffer) {
 	return res.mime;
 }
 
-const write = (fileName, output, outputDir) => {
-	outputDir = outputDir || `${__dirname}/../../../demo`;
+const write = (output, { fileName, outputDir }) => {;
 	fs.writeFileSync(`${outputDir}/${fileName}.mhtml`, output);
 }
 
