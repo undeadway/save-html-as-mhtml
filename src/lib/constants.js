@@ -9,7 +9,7 @@ const QUOTED_PRINTABLE = "quoted-printable";
 const AT_MHTML_BLINK = "@mhtml.blink";
 
 const WINDOWS_PATH_REGX = /^[a-zA-Z]:/;
-const HTML_IMAGE_REGX = /<img src="(\S{1,})" \/>/;
+const HTML_IMAGE_REGX = /<img.*?src=[\"|\']?(.*?)[\"|\']?\s.*?>/i;
 
 const HTTP = "http", HTTPS = "https";
 const MK_POINT = ".", MK_DASH = "-", MK_SLASH = "/";
